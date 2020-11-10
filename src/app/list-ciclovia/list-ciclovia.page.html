@@ -1,0 +1,31 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Lista de puntos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+
+  <ion-list>
+   
+      <ion-fab-button  size="small" (click)="add()"><ion-icon name="add"></ion-icon></ion-fab-button>
+   
+  
+    <ion-list-header>
+      Puntos Tomados
+    </ion-list-header>
+    <ion-item  *ngFor="let item  of listPuntoCiclovia">
+      <ion-label>
+
+      <h2>{{item.ciclovia}}</h2>
+      <h3>{{item.tramo}}</h3>
+      <p>{{item.seccion_vial_normativa}}</p>
+      </ion-label>
+      
+
+    </ion-item>
+
+  </ion-list>
+
+</ion-content>

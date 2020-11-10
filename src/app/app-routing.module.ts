@@ -8,8 +8,24 @@ const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'esri-map',
     pathMatch: 'full'
+  },
+  {
+    path: 'ciclovia',
+    loadChildren: () => import('./ciclovia/ciclovia.module').then( m => m.CicloviaPageModule)
+  },
+  {
+    path: 'list-ciclovia',
+    loadChildren: () => import('./list-ciclovia/list-ciclovia.module').then( m => m.ListCicloviaPageModule)
+  },
+  {
+    path: 'login',
+    loadChildren: () => import('./login/login.module').then( m => m.LoginPageModule)
+  },
+  {
+    path: 'esri-map',
+    loadChildren: () => import('./esri-map/esri-map.module').then( m => m.EsriMapPageModule)
   },
 ];
 

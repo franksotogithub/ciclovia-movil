@@ -1,0 +1,49 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>esri-map</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+
+  
+  <div #mapViewNode  id="mapa">
+
+  
+   </div>
+   <div #addPoint id="addPoint">
+
+      <ion-fab-button  size="small" (click)="add()"><ion-icon name="add"></ion-icon></ion-fab-button>
+   </div>
+
+   <div #hideButtonDiv id="hideButtonDiv" >
+
+    <ion-fab-button  size="small" (click)="hide()" *ngIf="!isHide"><ion-icon name="arrow-up"></ion-icon></ion-fab-button>
+    
+    <ion-fab-button  size="small" (click)="hide()" *ngIf="isHide">
+
+      <ion-icon name="arrow-down"></ion-icon>
+
+    </ion-fab-button>
+ </div>
+
+ 
+  <div #basemapGalleryDiv id="basemapGalleryDiv" [class.hide]="isHide" > 
+    
+
+  </div>
+ 
+   
+   <link rel="stylesheet" href="https://js.arcgis.com/4.17/esri/themes/light/main.css">
+ <style>
+   /*
+   .esri-ui-corner .esri-component {
+    box-shadow: 0 0x 0px!important;
+}*/
+ </style>
+
+ 
+</ion-content>
+
+<!-- arrow-dropleft-circle -->
