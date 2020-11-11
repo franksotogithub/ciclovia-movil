@@ -1,10 +1,12 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from "@angular/core";
 import { loadModules } from "esri-loader";
 import { Geolocation } from '@ionic-native/geolocation/ngx';
-import { BackgroundGeolocation, BackgroundGeolocationConfig, BackgroundGeolocationEvents, BackgroundGeolocationResponse} from '@ionic-native/background-geolocation/ngx';
+
 import { PuntoCicloviaService } from '../services/punto-ciclovia.service';
 import { PuntoCicloViaModel } from '../model/punto_ciclo_via/puntoCicloVia.model';
 import { NavController } from '@ionic/angular';
+
+declare var window;
 @Component({
   selector: 'app-esri-map',
   templateUrl: './esri-map.page.html',
@@ -25,31 +27,21 @@ export class EsriMapPage implements OnInit {
   myInterval:any;
 
   graphicsLayer:any;
+  latitude :any;
 
+  locations:any;
 
-   config: BackgroundGeolocationConfig = {
-    desiredAccuracy: 10,
-    stationaryRadius: 20,
-    distanceFilter: 30,
-    debug: false, //  Esto hace que el dispositivo emita sonidos cuando lanza un evento de localización
-    stopOnTerminate: false, // Si pones este en verdadero, la aplicación dejará de trackear la localización cuando la app se haya cerrado.
-    //Estas solo están disponibles para Android
-    locationProvider: 1, //Será el proveedor de localización. Gps, Wifi, Gms, etc...
-    startForeground: true, 
-    interval: 6000, //El intervalo en el que se comprueba la localización.
-    fastestInterval: 5000, //Este para cuando está en movimiento.
-    activitiesInterval: 10000, //Este es para cuando está realizando alguna actividad con el dispositivo.
-};
+  
 
+  constructor(
+    private geolocation: Geolocation,
 
-
-  constructor(private geolocation: Geolocation,  
     private puntoCicloviaService: PuntoCicloviaService,
     private navCtrl : NavController,
-    private backgroundGeolocation: BackgroundGeolocation,
+    //private backgroundGeolocation: BackgroundGeolocation,
     ) {}
 
-
+/*
  initBackgroundGeolocation(){
 
   this.backgroundGeolocation.configure(this.config)
@@ -57,16 +49,18 @@ export class EsriMapPage implements OnInit {
 
     this.backgroundGeolocation.on(BackgroundGeolocationEvents.location).subscribe((location: BackgroundGeolocationResponse) => {
       console.log(location);
-
+      this.latitude=location.latitude;
       // IMPORTANT:  You must execute the finish method here to inform the native plugin that you're finished,
       // and the background-task may be completed.  You must do this regardless if your operations are successful or not.
       // IF YOU DON'T, ios will CRASH YOUR APP for spending too much time in the background.
-      this.backgroundGeolocation.finish(); // FOR IOS ONLY
+      //this.backgroundGeolocation.finish(); 
     });
 
   });
 
- }
+  this.backgroundGeolocation.start();
+
+ }*/
  
  
 
@@ -135,10 +129,16 @@ export class EsriMapPage implements OnInit {
       this.view.when( ()=>{
         
         this.addPoints();
-        
+        this.initCurrentLocation();
       }); 
 
-      this.initCurrentLocation();
+
+     
+     
+     
+  
+
+
       /*
       setInterval(()=>{ 
         this.getCurrentPoint();  
@@ -155,7 +155,8 @@ export class EsriMapPage implements OnInit {
 
   ngOnInit() {
     this.initializeMap();
-    this.initBackgroundGeolocation();
+
+    //this.initBackgroundGeolocation();
    
   }
 
@@ -179,7 +180,7 @@ export class EsriMapPage implements OnInit {
 
  getCurrentPoint(){
   
-    this.geolocation.getCurrentPosition().then((resp) => {
+   /* this.geolocation.getCurrentPosition().then((resp) => {
 
 
       if(resp){
@@ -191,7 +192,7 @@ export class EsriMapPage implements OnInit {
      }).catch((error) => {
        console.log('Error getting location', error);
      });
-  
+  */
   }
 
   async addCurrentPoint(resp){
@@ -240,12 +241,15 @@ export class EsriMapPage implements OnInit {
 
   }
 
-
+  getLocations(){
+    let l=JSON.parse(localStorage.getItem("location"));
+    this.locations = ( l== null) ? []:l; 
+  }
   
   ionViewDidEnter() {
   
       this.addPoints();
-      this.backgroundGeolocation.start();
+     
      /*this.myInterval= setInterval(()=>{ 
         this.getCurrentPoint();  
       
@@ -255,7 +259,7 @@ export class EsriMapPage implements OnInit {
 
 
   ionViewDidLeave() {  
-    this.backgroundGeolocation.stop();
+    /*this.backgroundGeolocation.stop();*/
     /*clearInterval(  this.myInterval);*/
  
 }
@@ -356,7 +360,9 @@ export class EsriMapPage implements OnInit {
     }
   }
 
+display(){
 
+}
 
   add(){
     this.navCtrl.navigateForward("/ciclovia");

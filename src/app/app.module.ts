@@ -29,11 +29,11 @@ import { BackgroundGeolocation } from '@ionic-native/background-geolocation/ngx'
     RxReactiveFormsModule,
   ],
   providers: [
-    BackgroundGeolocation,
+    
     Geolocation,
     StatusBar,
     SplashScreen,
-    
+    BackgroundGeolocation,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

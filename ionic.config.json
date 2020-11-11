@@ -1,7 +1,10 @@
 {
   "name": "ciclovia",
   "integrations": {
-    "capacitor": {}
+    "capacitor": {
+      "enabled": false
+    },
+    "cordova": {}
   },
   "type": "angular"
 }

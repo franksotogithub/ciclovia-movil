@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>esri-map</ion-title>
+    <ion-title>esri-map : {{view.center}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -15,6 +15,12 @@
    <div #addPoint id="addPoint">
 
       <ion-fab-button  size="small" (click)="add()"><ion-icon name="add"></ion-icon></ion-fab-button>
+      <ion-fab-button  size="small" (click)="getLocations()"><ion-icon name="alarm"></ion-icon></ion-fab-button>
+
+      <ion-list *ngFor ="let location in locations">
+        <ion-item> <ion-label> <b> Latitude:</b> </ion-label> {{location.latitude}}</ion-item>
+
+      </ion-list>
    </div>
 
    <div #hideButtonDiv id="hideButtonDiv" >
