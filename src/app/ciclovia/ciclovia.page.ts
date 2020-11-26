@@ -6,6 +6,12 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { AlertController }  from '@ionic/angular';
 import { NavController } from '@ionic/angular';
 import { IonContent  } from '@ionic/angular';
+import { RxFormBuilder } from '@rxweb/reactive-form-validators';
+import { FormGroup } from '@angular/forms';
+import { ViaModel } from '../model/via/via.model';
+import { UsuarioModel } from '../model/usuario/usuario.model';
+import {Storage} from '@ionic/storage';
+import { DistritoModel } from '../model/distrito/distrito.model';
 
 @Component({
   selector: 'app-ciclovia',
@@ -14,7 +20,7 @@ import { IonContent  } from '@ionic/angular';
 })
 export class CicloviaPage implements OnInit {
   @ViewChild(IonContent ) content: IonContent ;
-
+ 
   dateNow = new Date();
 
   sentido =[
@@ -86,59 +92,106 @@ export class CicloviaPage implements OnInit {
 
 
   puntoCicloVia: PuntoCicloViaModel;
+  public cicloViaFormGroup: FormGroup;
+
   constructor( 
     public alertController: AlertController,
     private puntoCicloviaService: PuntoCicloviaService,
     private geolocation: Geolocation,
     private navCtrl : NavController,
-    ) {}
+    private formBuilder: RxFormBuilder,
+    private storage : Storage,
+    ) {
 
 
-  ngOnInit() {
+      /*this.settingForm();*/
+    }
+
+
+  async ngOnInit() {
     this.puntoCicloVia = new PuntoCicloViaModel();
+    
+
+    this.settingForm();
+
+    /*
+    let via: ViaModel= JSON.parse( await this.storage.get("via"));
+    let user: UsuarioModel=JSON.parse( await this.storage.get("currentUser"));
+*/
+
+    let via: ViaModel= JSON.parse( localStorage.getItem("via"));
+    let user: UsuarioModel=JSON.parse( localStorage.getItem("currentUser"));
+    let distrito : DistritoModel = JSON.parse(localStorage.getItem("distrito"));
+    console.log('user>>>',user);
+    this.puntoCicloVia.ciclovia=via.Name;
+    this.puntoCicloVia.usuario =user.username; 
+    this.puntoCicloVia.distrito = distrito.NOMBDIST; 
+  
   }
 
 
-  async alertaGeolocalizacion(){
+  ionViewDidEnter() {
+   
+    const point=this.puntoCicloviaService.getPoint();
+    this.puntoCicloVia.latitud=point.coords.latitude;
+    this.puntoCicloVia.longitud= point.coords.longitude;
+
+  }
+
+
+  settingForm():void{
+    this.cicloViaFormGroup = this.formBuilder.formGroup(this.puntoCicloVia);
+    
+    this.cicloViaFormGroup.valueChanges.subscribe(change=>{  
+      
+      this.puntoCicloVia.is_valid=this.cicloViaFormGroup.valid
+      console.log(this.puntoCicloVia,this.cicloViaFormGroup );
+    }); 
+   }
+
+
+
+  async alertaFormularioIncompleto(){
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
-      header: 'Punto',
+      header: 'Error',
       subHeader: '',
-      message: 'Se tomo el punto correctamente',
+      message: 'Falta completar campos',
       buttons: ['OK']
     });
-
     await alert.present();
-  }
-
-    geolocalizar(){
-
-
-    this.geolocation.getCurrentPosition().then((resp) => {
-      this.puntoCicloVia.latitud=resp.coords.latitude;
-      this.puntoCicloVia.longitud=resp.coords.longitude;
-      this.alertaGeolocalizacion();
-      
-     }).catch((error) => {
-       console.log('Error getting location', error);
-     });
-
-  }
-  guardar(){
-    this.puntoCicloviaService.createPuntosCiclovia(this.puntoCicloVia).subscribe(res=>{
-      
-      if(res){
-        this.navCtrl.navigateForward("/esri-map");
-      }
-    });
-  }
-
-  regresar(){
     
-        this.navCtrl.navigateForward("/esri-map");
-      screen
+  }
+
+
+
+  guardar(){
+    console.log(this.puntoCicloVia.is_valid)
+    if(this.puntoCicloVia.is_valid){
+
+      
+      this.puntoCicloviaService.createPuntosCiclovia(this.puntoCicloVia).subscribe(res=>{
+        
+        if(res){
+          this.navCtrl.navigateForward("/esri-map");
+        }
+      });
+
+    }
+
+    else{
+      this.alertaFormularioIncompleto();
+    }
+    
+  }
+
+
+  regresar(){    
+    this.navCtrl.navigateForward("/esri-map");     
    
   }
+
+
   public pageScroller(){
     this.content.scrollToTop();
   }

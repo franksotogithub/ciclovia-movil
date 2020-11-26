@@ -1,6 +1,10 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>esri-map : {{view.center}}</ion-title>
+    <img src="assets/img/geocleta.jpg"  style="display:inline-block" height="40px" > 
+    <ion-title style="display:inline-block" >Geocleta</ion-title>
+    <ion-button  style="display:inline-block" slot="end" size="small" type="submit"  color="primary" (click)="logout()"> <ion-icon name="exit"></ion-icon> </ion-button>
+    <!--<div img="./assets/img/geotecla.jpg" style="height: 500px;
+    width: 100%;" ></div>-->
   </ion-toolbar>
 </ion-header>
 
@@ -13,14 +17,7 @@
   
    </div>
    <div #addPoint id="addPoint">
-
-      <ion-fab-button  size="small" (click)="add()"><ion-icon name="add"></ion-icon></ion-fab-button>
-      <ion-fab-button  size="small" (click)="getLocations()"><ion-icon name="alarm"></ion-icon></ion-fab-button>
-
-      <ion-list *ngFor ="let location in locations">
-        <ion-item> <ion-label> <b> Latitude:</b> </ion-label> {{location.latitude}}</ion-item>
-
-      </ion-list>
+      <ion-fab-button  size="small" (click)="add()"><ion-icon name="add"></ion-icon></ion-fab-button>           
    </div>
 
    <div #hideButtonDiv id="hideButtonDiv" >
@@ -28,11 +25,17 @@
     <ion-fab-button  size="small" (click)="hide()" *ngIf="!isHide"><ion-icon name="arrow-up"></ion-icon></ion-fab-button>
     
     <ion-fab-button  size="small" (click)="hide()" *ngIf="isHide">
-
       <ion-icon name="arrow-down"></ion-icon>
 
     </ion-fab-button>
- </div>
+  </div>
+
+  <div (click)="currentLocation()"  #location id="location" class="esri-component esri-locate esri-widget--button esri-widget" role="button" tabindex="0" aria-label="Buscar mi ubicación" title="Buscar mi ubicación">
+    <span aria-hidden="true" class="esri-icon esri-icon-locate"></span>
+    <span class="esri-icon-font-fallback-text">
+      Buscar mi ubicación</span>
+    </div>
+
 
  
   <div #basemapGalleryDiv id="basemapGalleryDiv" [class.hide]="isHide" > 

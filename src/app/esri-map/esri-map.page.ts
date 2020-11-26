@@ -5,8 +5,18 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { PuntoCicloviaService } from '../services/punto-ciclovia.service';
 import { PuntoCicloViaModel } from '../model/punto_ciclo_via/puntoCicloVia.model';
 import { NavController } from '@ionic/angular';
-
+import { AuthService } from '../services/auth.service';
+import { ViaService } from '../services/via.service';
+import { ViaModel } from '../model/via/via.model';
+import { GeomModel } from '../model/geom/geom.model';
+import { ViaRequets } from '../model/via/via.requets';
+import {Storage} from '@ionic/storage';
+import { DistritoService } from '../services/distrito.service';
+import { DistritoModel } from '../model/distrito/distrito.model';
+import { UsuarioModel } from '../model/usuario/usuario.model';
 declare var window;
+
+declare var navigator: any;
 @Component({
   selector: 'app-esri-map',
   templateUrl: './esri-map.page.html',
@@ -31,43 +41,34 @@ export class EsriMapPage implements OnInit {
 
   locations:any;
 
-  
+  watch:any;
+  subscription  :any;
+  dataLocation:any;
+
+  listVia : ViaModel[]; 
+  graphicsLayerVias:any;
 
   constructor(
     private geolocation: Geolocation,
 
     private puntoCicloviaService: PuntoCicloviaService,
     private navCtrl : NavController,
+    private authService: AuthService,
+    private viaService : ViaService,
+    private storage:Storage,
+    private distritoService: DistritoService,
     //private backgroundGeolocation: BackgroundGeolocation,
     ) {}
 
-/*
- initBackgroundGeolocation(){
 
-  this.backgroundGeolocation.configure(this.config)
-  .then(() => {
-
-    this.backgroundGeolocation.on(BackgroundGeolocationEvents.location).subscribe((location: BackgroundGeolocationResponse) => {
-      console.log(location);
-      this.latitude=location.latitude;
-      // IMPORTANT:  You must execute the finish method here to inform the native plugin that you're finished,
-      // and the background-task may be completed.  You must do this regardless if your operations are successful or not.
-      // IF YOU DON'T, ios will CRASH YOUR APP for spending too much time in the background.
-      //this.backgroundGeolocation.finish(); 
-    });
-
-  });
-
-  this.backgroundGeolocation.start();
-
- }*/
- 
  
 
   async initializeMap() {
     try {
       // Load the modules for the ArcGIS API for JavaScript
-      const [Map, MapView,BasemapGallery,Track,GraphicsLayer ] = await loadModules(["esri/Map", "esri/views/MapView","esri/widgets/BasemapGallery","esri/widgets/Track","esri/layers/GraphicsLayer"]);
+      const [Map, MapView,BasemapGallery,Track,GraphicsLayer,Locate ] = await loadModules(["esri/Map", "esri/views/MapView",
+      "esri/widgets/BasemapGallery","esri/widgets/Track",
+      "esri/layers/GraphicsLayer","esri/widgets/Locate"]);
 
       // Configure the Map
       const mapProperties = {
@@ -91,30 +92,26 @@ export class EsriMapPage implements OnInit {
 
       this.graphicsLayer = new GraphicsLayer();
       this.map.add(this.graphicsLayer);
-      
+      this.graphicsLayerVias = new GraphicsLayer();
+      this.map.add(this.graphicsLayerVias);
 
       var element =  document.getElementById("addPoint");
       var basemapGalleryDiv =  document.getElementById("basemapGalleryDiv");
       var hideButtonDiv =document.getElementById("hideButtonDiv");
+      var location =document.getElementById("location");
 
-/*
-      this.track = new Track({
-        view: this.view
-      });
-      
-      
-      this.view.ui.add(this.track, "top-left");
-*/
+
+
       this.view.ui.add(element,"top-right");
-
+      this.view.ui.add(location,"top-left");
       this.view.ui.add(hideButtonDiv,"top-right");
 
 
 
-      /*
-      this.getCurrentPoint();
+      
+   
 
-     */
+     
 
       const basemapGallery = new BasemapGallery({
         view: this.view,
@@ -122,30 +119,21 @@ export class EsriMapPage implements OnInit {
       });
       // Add widget to the top right corner of the view
 
+
+      /*
+      var locateWidget = new Locate({
+        view: this.view,   // Attaches the Locate button to the view
+        graphic:null,
+      });*/
+
+
       this.view.ui.add(basemapGallery, {
         position: "top-right"
       });
-      
-      this.view.when( ()=>{
-        
-        this.addPoints();
-        this.initCurrentLocation();
-      }); 
 
-
-     
-     
-     
-  
-
-
-      /*
-      setInterval(()=>{ 
-        this.getCurrentPoint();  
-      
-      }, 1000);
-     */
-
+      this.getCurrentPoint();
+      this.addVias();
+      this.addPoints();
       return this.view;
 
     } catch (error) {
@@ -153,48 +141,65 @@ export class EsriMapPage implements OnInit {
     }
   }
 
-  ngOnInit() {
-    this.initializeMap();
+  currentLocation(){  
 
-    //this.initBackgroundGeolocation();
-   
+    this.view.center=[this.dataLocation.coords.longitude,
+    this.dataLocation.coords.latitude];
+    this.view.zoom =18;    
+
   }
 
 
+  ngOnInit() {
+    this.initializeMap();
+    
+    /*this.initCurrentLocation();*/
+    
+    /*this.initializeMap(resp.coords.longitude,resp.coords.latitude);*/
+  }
+
+/*
  initCurrentLocation(){
-     
+  console.log('holass')
   this.geolocation.getCurrentPosition().then((resp) => {
 
     
     this.view.center=[resp.coords.longitude,resp.coords.latitude];
-    this.view.zoom =18;
-
-  
+    this.view.zoom =18;  
+    
 
    }).catch((error) => {
      console.log('Error getting location', error);
    });
  } 
+*/
 
 
 
- getCurrentPoint(){
-  
-   /* this.geolocation.getCurrentPosition().then((resp) => {
+ getCurrentPoint(){  
 
 
-      if(resp){
-          this.addCurrentPoint(resp);
+    this.watch = this.geolocation.watchPosition();
+
+    this.subscription=this.watch.subscribe((data) => {
+        if(data ){
+          this.dataLocation=data;     
+          
+          
+          console.log('data>>>',data);
+          /**/
+          this.addCurrentPoint(data);
+          this.currentLocation();
+          
       }
     
-      return resp;
+    });
 
-     }).catch((error) => {
-       console.log('Error getting location', error);
-     });
-  */
+
   }
 
+
+  
   async addCurrentPoint(resp){
 
     try {
@@ -203,7 +208,9 @@ export class EsriMapPage implements OnInit {
         this.view.graphics.remove(this.currentPoint);
       }
   
-  
+      if( this.view){
+        
+      }
       const simpleMarkerSymbol = {
         type: "simple-marker",
         color: [14, 75, 239],  
@@ -241,27 +248,20 @@ export class EsriMapPage implements OnInit {
 
   }
 
-  getLocations(){
-    let l=JSON.parse(localStorage.getItem("location"));
-    this.locations = ( l== null) ? []:l; 
-  }
+
   
   ionViewDidEnter() {
-  
+    /*
       this.addPoints();
-     
-     /*this.myInterval= setInterval(()=>{ 
-        this.getCurrentPoint();  
-      
-      }, 5000);*/
-   
+    
+      this.getCurrentPoint(); */
+      this.getCurrentPoint();
+      this.addPoints();
   }
 
 
   ionViewDidLeave() {  
-    /*this.backgroundGeolocation.stop();*/
-    /*clearInterval(  this.myInterval);*/
- 
+       this.subscription.unsubscribe();
 }
 
   async addPoints(){
@@ -284,6 +284,7 @@ export class EsriMapPage implements OnInit {
       height: "20px"
     };
 
+    let user: UsuarioModel=JSON.parse( localStorage.getItem("currentUser"));
 
     if(this.graphicsLayer){
 
@@ -360,17 +361,164 @@ export class EsriMapPage implements OnInit {
     }
   }
 
-display(){
 
-}
+  async addVias(){
+    try {
+      // Load the modules for the ArcGIS API for JavaScript
+      const [Graphic] = await loadModules(["esri/Graphic","esri/layers/GraphicsLayer","esri/symbols/WebStyleSymbol"]);
+      
+     
+      var polylineSymbol = {
+        type: "simple-line",  // autocasts as SimpleLineSymbol()
+        color: [255, 0, 0],
+        width: 4
+      };
+
+
+    if(this.graphicsLayerVias){
+
+      this.graphicsLayerVias.removeAll();
+
+
+      this.viaService.getAllVia().subscribe(res=>{
+        this.listVia=res.map(r=> {return new ViaModel(r)});
+        
+        this.listVia.map(v=>{
+          
+          let geom= new GeomModel(JSON.parse(v.GeoJson));
+
+          var polyline = {
+            type: "polyline",  // autocasts as new Polyline()
+              paths: geom.coordinates
+          };
+
+          var polylineAtt = {
+            Name: v.Name,
+            
+          };
+          
+       
+          var polylineGraphic = new Graphic({
+            geometry: polyline,
+            symbol: polylineSymbol,
+            attributes: polylineAtt
+          });
+
+
+          this.graphicsLayerVias.add(polylineGraphic);
+          
+
+
+
+
+/*
+        if(p.latitud && p.longitud){
+          const point = {
+            type: "point",
+            longitude:p.longitud,
+            latitude: p.latitud,
+          };
+
+
+
+
+          const pointGraphic = new Graphic({
+            geometry: point,
+            symbol: symbol
+          });
+
+          pointGraphic.attributes = {
+            "distrito": p.distrito,
+            "ciclovia": p.ciclovia,
+            
+          };
+          pointGraphic.popupTemplate ={
+        
+          
+            outFields: ["*"],
+            content: [{
+              type: "fields", 
+            
+              fieldInfos: [
+                {
+                fieldName: "distrito",
+                label: "Distrito",
+             
+               
+              },
+
+              {
+                fieldName: "ciclovia",
+                label: "Ciclovia",
+         
+              },
+            
+            ]
+            }]
+
+          }
+
+     
+
+          this.graphicsLayer.add(pointGraphic);
+        }*/
+
+  
+        });
+        
+      });
+
+
+
+    }
+
+    } catch (error) {
+      console.error("EsriLoader: ", error);
+    }
+
+  }
+  
+  
+  display(){
+
+  }
+
 
   add(){
-    this.navCtrl.navigateForward("/ciclovia");
+    this.puntoCicloviaService.setPoint(this.dataLocation);
+
+    this.viaService.getViaCercana(this.dataLocation.coords.longitude, this.dataLocation.coords.latitude).toPromise().then((resp:ViaRequets[])=>{
+      if(resp.length>0){
+        let via = new ViaModel(resp[0]);
+        localStorage.setItem("via",JSON.stringify(via));
+        this.distritoService.getDistritoCercano(this.dataLocation.coords.longitude, this.dataLocation.coords.latitude).toPromise().
+        then((resp)=>{
+          if(resp.length>0){
+
+            let distrito = new DistritoModel(resp[0]);
+            localStorage.setItem("distrito",JSON.stringify(distrito));
+
+          }
+          this.navCtrl.navigateForward("/ciclovia");
+        });
+        
+        
+        /*this.storage.set("via",JSON.stringify(via));*/
+   
+      }
+      
+      
+    });
+    
   }
 
   hide(){
     this.isHide=!this.isHide
     
+  }
+
+  logout(){
+    this.authService.logout();
   }
 
 }

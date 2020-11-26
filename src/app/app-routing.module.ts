@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { LoginGuard } from './core/guards/login.guard';
 
 const routes: Routes = [
   {
@@ -25,7 +26,12 @@ const routes: Routes = [
   },
   {
     path: 'esri-map',
-    loadChildren: () => import('./esri-map/esri-map.module').then( m => m.EsriMapPageModule)
+    loadChildren: () => import('./esri-map/esri-map.module').then( m => m.EsriMapPageModule),
+    canActivate:[LoginGuard]
+  },
+  {
+    path: 'register',
+    loadChildren: () => import('./register/register.module').then( m => m.RegisterPageModule)
   },
 ];
 

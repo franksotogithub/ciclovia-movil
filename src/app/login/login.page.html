@@ -1,9 +1,46 @@
-<ion-header>
+<!--<ion-header>
   <ion-toolbar>
     <ion-title>login</ion-title>
   </ion-toolbar>
 </ion-header>
+-->
+<ion-content  padding>
+  <form [formGroup]="loginFormGroup" (ngSubmit)="loginUser($event)">
+    <ion-grid>
+      <ion-row color="primary" justify-content-center>
+        <ion-col align-self-center size-md="6" size-lg="5" size-xs="12">
+          <div text-center>
+            <h3> Login</h3>
+          </div>
+          <div padding>
+            <ion-item>
+              <ion-input formControlName="username" type="text" placeholder="Username"  [(ngModel)]="login.username" ></ion-input>
+            </ion-item>
+            <small  *ngIf="loginFormGroup.controls.username.errors  && (loginFormGroup.controls.username._dirty || loginFormGroup.controls.username._touched) " class="text-danger" >{{loginFormGroup.controls.username["errorMessage"]}}</small>
+            <ion-item>
+              <ion-input formControlName="password" type="password" placeholder="Password" [(ngModel)]="login.password" ></ion-input>
+            </ion-item>
+            <small  *ngIf="loginFormGroup.controls.password.errors &&  (loginFormGroup.controls.password._dirty || loginFormGroup.controls.password._touched) " class="text-danger" >{{loginFormGroup.controls.password["errorMessage"]}}</small>
+          </div>
+          <div padding>
+            
 
-<ion-content>
-
+            <ion-button [disabled]="!login.is_valid" size="large" type="submit" expand="block" color="primary">Login</ion-button>
+            <ion-button (click)="register($event)" expand="block"  fill="outline" color="secondary">Register</ion-button>
+            <small class="text-danger" *ngIf="error_login">
+              {{error_message}}
+            </small>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
 </ion-content>
+<!--
+<small *ngIf="cicloViaFormGroup.controls.tramo.errors" class="text-danger">{{cicloViaFormGroup.controls.tramo["errorMessage"]}}</small>-->
+
+
+<!--[(ngModel)]="puntoCicloVia.ciclovia"  formControlName="ciclovia"
+
+<small  *ngIf="cicloViaFormGroup.controls.ciclovia.errors" class="text-danger" >{{cicloViaFormGroup.controls.ciclovia["errorMessage"]}}</small>
+-->

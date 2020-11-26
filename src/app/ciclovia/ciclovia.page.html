@@ -23,7 +23,9 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" *ngIf="cicloViaFormGroup">
+
+
 
 
 
@@ -33,47 +35,58 @@
     </ion-toolbar>
   </ion-header>
 
-
+  <form  [formGroup]="cicloViaFormGroup"  >
     <ion-item>
       <ion-label>CICLOVIA:</ion-label>
-      <ion-input [(ngModel)]="puntoCicloVia.ciclovia" [ngModelOptions]="{standalone: true}" ></ion-input>
+      <ion-input [(ngModel)]="puntoCicloVia.ciclovia"  formControlName="ciclovia"></ion-input>     
     </ion-item>
    
-
- 
+    <small  *ngIf="cicloViaFormGroup.controls.ciclovia.errors" class="text-danger" >{{cicloViaFormGroup.controls.ciclovia["errorMessage"]}}</small>
+    
     <ion-item>
       <ion-label>DISTRITO:</ion-label>
-      <ion-input  [(ngModel)]="puntoCicloVia.distrito" [ngModelOptions]="{standalone: true}"></ion-input>
+      <ion-input  [(ngModel)]="puntoCicloVia.distrito" formControlName="distrito"></ion-input>    
     </ion-item>
-
+    
+    <small *ngIf="cicloViaFormGroup.controls.distrito.errors" class="text-danger">{{cicloViaFormGroup.controls.distrito["errorMessage"]}}</small>
+    
     <ion-item>
+
       <ion-label>TRAMO:</ion-label>
-      <ion-input   [(ngModel)]="puntoCicloVia.tramo" [ngModelOptions]="{standalone: true}" ></ion-input>
+      <ion-input   [(ngModel)]="puntoCicloVia.tramo" formControlName="tramo" ></ion-input>
+  
     </ion-item>
+    <small *ngIf="cicloViaFormGroup.controls.tramo.errors" class="text-danger">{{cicloViaFormGroup.controls.tramo["errorMessage"]}}</small>
+
 
     <ion-item>
       <ion-label>FECHA:</ion-label>
       <ion-datetime  value="{{dateNow}}"  display-timezone="utc" display-format="DD/MM/YYYY" disabled  ></ion-datetime>
-     <!--<ion-input  type="date"></ion-input>-->
+   
     </ion-item>
 
 
     <ion-item>
       <ion-label>RESPONSABLE:</ion-label>
-      <ion-input  [(ngModel)]="puntoCicloVia.usuario"  ></ion-input>
+      <ion-input  [(ngModel)]="puntoCicloVia.usuario"   formControlName="usuario" ></ion-input>
+    
     </ion-item>
-
+    <small *ngIf="cicloViaFormGroup.controls.usuario.errors" class="text-danger">{{cicloViaFormGroup.controls.usuario["errorMessage"]}}</small>
+    
     <ion-item>
       <ion-label>SECCIÓN VIAL NORMATIVA:</ion-label>
-      <ion-input  [(ngModel)]="puntoCicloVia.seccion_vial_normativa"  [ngModelOptions]="{standalone: true}" ></ion-input>
+      <ion-input  [(ngModel)]="puntoCicloVia.seccion_vial_normativa"    formControlName="seccion_vial_normativa"  ></ion-input>
+    
     </ion-item>
-
+    <small *ngIf="cicloViaFormGroup.controls.seccion_vial_normativa.errors" class="text-danger">{{cicloViaFormGroup.controls.seccion_vial_normativa["errorMessage"]}}</small>
     
     <ion-item>
       <ion-label>SECCIÓN VIAL ACTUAL:</ion-label>
-      <ion-input  [(ngModel)]="puntoCicloVia.seccion_vial_actual"   [ngModelOptions]="{standalone: true}"></ion-input>
-    </ion-item>
 
+      <ion-input  [(ngModel)]="puntoCicloVia.seccion_vial_actual"   formControlName="seccion_vial_actual"  ></ion-input>
+     
+    </ion-item>
+    <small *ngIf="cicloViaFormGroup.controls.seccion_vial_actual.errors" class="text-danger">{{cicloViaFormGroup.controls.seccion_vial_actual["errorMessage"]}}</small>
 
 
     <ion-grid>
@@ -92,14 +105,15 @@
   
             <ion-item>
               <ion-label>ELEGIR: </ion-label>
-              <ion-select [(ngModel)]="puntoCicloVia.tipo"  [ngModelOptions]="{standalone: true}">
-                <ion-select-option *ngFor="let item of tiposVia" value="{{item.value}}" >
+              <ion-select [(ngModel)]="puntoCicloVia.tipo"  formControlName="tipo" >
+                <ion-select-option *ngFor="let item of tiposVia"  value="{{item.value}}" >
                   {{ item.text}}
                 </ion-select-option>
               </ion-select>
+          
             </ion-item>
           
-  
+            <small *ngIf="cicloViaFormGroup.controls.tipo.errors" class="text-danger">{{cicloViaFormGroup.controls.tipo["errorMessage"]}}</small>
           </div>
         </ion-col>
   
@@ -110,10 +124,12 @@
             <ion-item>
       
               <ion-label>ANCHO: </ion-label>
-              <ion-input type="number"   [(ngModel)]="puntoCicloVia.tipo_ancho" [ngModelOptions]="{standalone: true}"  >
+              <ion-input type="number"   [(ngModel)]="puntoCicloVia.tipo_ancho"  formControlName="tipo_ancho"  >
+             
               </ion-input>
-      
+            
           </ion-item>
+          <small *ngIf="cicloViaFormGroup.controls.tipo_ancho.errors" class="text-danger">{{cicloViaFormGroup.controls.tipo_ancho["errorMessage"]}}</small>
         </div>
         </ion-col>
   
@@ -134,13 +150,15 @@
             <ion-item>
 
             <ion-label>TIPO : </ion-label>
-            <ion-select [(ngModel)]="puntoCicloVia.ele_seg_tipo"  [ngModelOptions]="{standalone: true}" >
+            <ion-select [(ngModel)]="puntoCicloVia.ele_seg_tipo"  formControlName="ele_seg_tipo"  >
               <ion-select-option *ngFor="let item of tiposSegregador" value="{{item.value}}" >
                 {{ item.text}}
               </ion-select-option>
             </ion-select>
+            
 
           </ion-item>
+          <small *ngIf="cicloViaFormGroup.controls.ele_seg_tipo.errors" class="text-danger">{{cicloViaFormGroup.controls.ele_seg_tipo["errorMessage"]}}</small>
         </div>
         </ion-col>
 
@@ -150,14 +168,16 @@
             <ion-item>
 
             <ion-label>ESTADO : </ion-label>
-            <ion-select [(ngModel)]="puntoCicloVia.ele_seg_estado" [ngModelOptions]="{standalone: true}" >
+            <ion-select [(ngModel)]="puntoCicloVia.ele_seg_estado"  formControlName="ele_seg_estado" >
               <ion-select-option *ngFor="let item of estadoSegregador" value="{{item.value}}" >
                 {{ item.text}}
               </ion-select-option>
             
             </ion-select>
 
+        
           </ion-item>
+          <small *ngIf="cicloViaFormGroup.controls.ele_seg_estado.errors" class="text-danger">{{cicloViaFormGroup.controls.ele_seg_estado["errorMessage"]}}</small>
         </div>
         </ion-col>
 
@@ -179,13 +199,14 @@
             <ion-item>
 
             <ion-label>TIPO : </ion-label>
-            <ion-select [(ngModel)]="puntoCicloVia.ele_senial_ver_tipo" [ngModelOptions]="{standalone: true}" >
+            <ion-select [(ngModel)]="puntoCicloVia.ele_senial_ver_tipo"  formControlName="ele_senial_ver_tipo" >
               <ion-select-option *ngFor="let item of tiposSeVer" value="{{item.value}}" >
                 {{ item.text}}
               </ion-select-option>
             </ion-select>
-
+        
           </ion-item>
+          <small *ngIf="cicloViaFormGroup.controls.ele_senial_ver_tipo.errors" class="text-danger">{{cicloViaFormGroup.controls.ele_senial_ver_tipo["errorMessage"]}}</small>
         </div>
         </ion-col>
 
@@ -195,13 +216,15 @@
             <ion-item>
 
             <ion-label>ESTADO : </ion-label>
-            <ion-select [(ngModel)]="puntoCicloVia.ele_senial_ver_estado" [ngModelOptions]="{standalone: true}" >
+            <ion-select [(ngModel)]="puntoCicloVia.ele_senial_ver_estado"  formControlName="ele_senial_ver_estado" >
               <ion-select-option *ngFor="let item of estadoSeVer" value="{{item.value}}" >
                 {{ item.text}}
               </ion-select-option>
             </ion-select>
+          
 
           </ion-item>
+          <small *ngIf="cicloViaFormGroup.controls.ele_senial_ver_estado.errors" class="text-danger">{{cicloViaFormGroup.controls.ele_senial_ver_estado["errorMessage"]}}</small>
         </div>
         </ion-col>
 
@@ -222,13 +245,17 @@
             <ion-item>
 
             <ion-label>TIPO : </ion-label>
-            <ion-select  [(ngModel)]="puntoCicloVia.ele_senial_hor_tipo"  [ngModelOptions]="{standalone: true}">
+            <ion-select  [(ngModel)]="puntoCicloVia.ele_senial_hor_tipo"   formControlName="ele_senial_hor_tipo" >
               <ion-select-option *ngFor="let item of tiposSeHor" value="{{item.value}}" >
                 {{ item.text}}
               </ion-select-option>
             </ion-select>
+          
+
 
           </ion-item>
+
+          <small *ngIf="cicloViaFormGroup.controls.ele_senial_hor_tipo.errors" class="text-danger">{{cicloViaFormGroup.controls.ele_senial_hor_tipo["errorMessage"]}}</small>
         </div>
         </ion-col>
 
@@ -238,10 +265,11 @@
             <ion-item>
 
             <ion-label>VALOR : </ion-label>
-            <ion-input type="number"   [(ngModel)]="puntoCicloVia.ele_senial_hor_valor" [ngModelOptions]="{standalone: true}"  >
+            <ion-input type="number"   [(ngModel)]="puntoCicloVia.ele_senial_hor_valor"  formControlName="ele_senial_hor_valor" >
             </ion-input>
-
+          
           </ion-item>
+          <small *ngIf="cicloViaFormGroup.controls.ele_senial_hor_valor.errors" class="text-danger">{{cicloViaFormGroup.controls.ele_senial_hor_valor["errorMessage"]}}</small>
         </div>
         </ion-col>
 
@@ -263,13 +291,16 @@
             <ion-item>
 
             <ion-label>TIPO : </ion-label>
-            <ion-select [(ngModel)]="puntoCicloVia.supe_rodadura_tipo" [ngModelOptions]="{standalone: true}" >
+            <ion-select [(ngModel)]="puntoCicloVia.supe_rodadura_tipo"   formControlName="supe_rodadura_tipo" >
               <ion-select-option *ngFor="let item of tiposSuRod" value="{{item.value}}" >
                 {{ item.text}}
               </ion-select-option>
             </ion-select>
 
+
+    
           </ion-item>
+          <small *ngIf="cicloViaFormGroup.controls.supe_rodadura_tipo.errors" class="text-danger">{{cicloViaFormGroup.controls.supe_rodadura_tipo["errorMessage"]}}</small>
         </div>
         </ion-col>
 
@@ -279,10 +310,12 @@
             <ion-item>
 
             <ion-label>VALOR : </ion-label>
-            <ion-input type="number" [(ngModel)]="puntoCicloVia.supe_rodadura_valor" [ngModelOptions]="{standalone: true}" >
+            <ion-input type="number" [(ngModel)]="puntoCicloVia.supe_rodadura_valor" formControlName="supe_rodadura_valor" >
             </ion-input>
 
+        
           </ion-item>
+          <small *ngIf="cicloViaFormGroup.controls.supe_rodadura_valor.errors" class="text-danger">{{cicloViaFormGroup.controls.supe_rodadura_valor["errorMessage"]}}</small>
         </div>
         </ion-col>
 
@@ -291,13 +324,13 @@
 
     </ion-grid>
 
-
+    <!---
     <ion-button expand ="full" 
     shape="round"  
     color ="warning" 
     (click)="geolocalizar()"
     > Tomar punto</ion-button>
-
+    -->
     <ion-button expand ="full" 
     shape="round"  
     color ="primary" 
@@ -305,8 +338,8 @@
   (click)="guardar()"
     > Guardar</ion-button>
 
+  </form>
 </ion-content>
-
 
 
 <ion-fab  vertical="top" horizontal="end" >

@@ -4,21 +4,21 @@ import { CommonModule } from '@angular/common';
 
 import { IonicModule } from '@ionic/angular';
 
-import { LoginPageRoutingModule } from './login-routing.module';
+import { RegisterPageRoutingModule } from './register-routing.module';
 
-import { LoginPage } from './login.page';
+import { RegisterPage } from './register.page';
 import { FormsModule , ReactiveFormsModule} from '@angular/forms';
 import { RxReactiveFormsModule } from '@rxweb/reactive-form-validators'; // <-- #2 import module
 
 @NgModule({
   imports: [
-    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     RxReactiveFormsModule,
     IonicModule,
-    LoginPageRoutingModule
+    CommonModule,
+    RegisterPageRoutingModule
   ],
-  declarations: [LoginPage]
+  declarations: [RegisterPage]
 })
-export class LoginPageModule {}
+export class RegisterPageModule {}

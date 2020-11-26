@@ -1,0 +1,56 @@
+<ion-content  padding>
+  <form [formGroup]="usuarioFormGroup" (ngSubmit)="registerUser($event)">
+    <ion-grid>
+      <ion-row color="primary" justify-content-center>
+        <ion-col align-self-center size-md="6" size-lg="5" size-xs="12">
+          <div text-center>
+            <h3>Registro</h3>
+          </div>
+          <div padding>
+            <ion-item>
+              
+              <ion-input formControlName="username" type="text" placeholder="Escriba un usuario"  [(ngModel)]="usuario.username" ></ion-input>
+            </ion-item>
+         
+            <small  *ngIf="usuarioFormGroup.controls.username.errors  && (usuarioFormGroup.controls.username._dirty || usuarioFormGroup.controls.username._touched) " class="text-danger" >{{usuarioFormGroup.controls.username["errorMessage"]}}</small>
+          
+            <ion-item>
+              <ion-input formControlName="password" type="password" placeholder="Escriba la contraseña" [(ngModel)]="usuario.password" ></ion-input>
+            </ion-item>
+ 
+            <small  *ngIf="usuarioFormGroup.controls.password.errors &&  (usuarioFormGroup.controls.password._dirty || usuarioFormGroup.controls.password._touched) " class="text-danger" >{{usuarioFormGroup.controls.password["errorMessage"]}}</small>
+ 
+            <ion-item>
+              <ion-input formControlName="name" type="text" placeholder="Escriba su nombre"  [(ngModel)]="usuario.name" ></ion-input>
+            </ion-item>
+
+            <small  *ngIf="usuarioFormGroup.controls.name.errors  && (usuarioFormGroup.controls.name._dirty || usuarioFormGroup.controls.name._touched) " class="text-danger" >{{usuarioFormGroup.controls.name["errorMessage"]}}</small>
+
+            <ion-item>
+              <ion-input formControlName="first_name" type="text" placeholder="Escriba su Apellido Paterno"  [(ngModel)]="usuario.first_name" ></ion-input>
+            </ion-item>
+
+            <small  *ngIf="usuarioFormGroup.controls.first_name.errors  && (usuarioFormGroup.controls.first_name._dirty || usuarioFormGroup.controls.first_name._touched) " class="text-danger" >{{usuarioFormGroup.controls.first_name["errorMessage"]}}</small>
+
+            <ion-item>
+
+              <ion-input formControlName="last_name" type="text" placeholder="Escriba su Apellido Materno"  [(ngModel)]="usuario.last_name" ></ion-input>
+            </ion-item>
+
+            <small  *ngIf="usuarioFormGroup.controls.last_name.errors  && (usuarioFormGroup.controls.last_name._dirty || usuarioFormGroup.controls.last_name._touched) " class="text-danger" >{{usuarioFormGroup.controls.last_name["errorMessage"]}}</small>
+
+
+          </div>
+          <div padding>
+            <ion-button [disabled]="!usuario.is_valid"  expand="block" type="submit"  color="primary">Registro</ion-button>
+            <ion-button  (click)="regresar($event)" expand="block" color="dark" >Atras</ion-button>
+           
+            <small class="text-danger" *ngIf="error_usuario">
+              {{error_message}}
+            </small>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+</ion-content>

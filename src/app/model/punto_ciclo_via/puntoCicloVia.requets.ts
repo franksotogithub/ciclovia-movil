@@ -9,7 +9,7 @@ export interface PuntoCicloViaRequest {
   seccion_vial_actual: string;
   tipo: string;
   tipo_ancho: number;
-  ancho: number;
+  
 
   ele_seg_tipo: string;
   ele_seg_estado: string;
